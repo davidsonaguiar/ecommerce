@@ -1,6 +1,6 @@
 package davidson.com.ecommerce.product;
 
-import davidson.com.ecommerce.SaleItem.SaleItem;
+import davidson.com.ecommerce.sale_item.SaleItem;
 import davidson.com.ecommerce.category.Category;
 import davidson.com.ecommerce.user.User;
 import jakarta.persistence.*;
@@ -58,6 +58,7 @@ public class Product implements Serializable {
     @Column(nullable = false)
     private Boolean active;
 
+    @NotNull(message = "Category is required")
     @ManyToMany
     @JoinTable(
             name = "product_categories",
@@ -69,7 +70,17 @@ public class Product implements Serializable {
     @OneToMany(mappedBy = "id.product")
     private List<SaleItem> saleItems = new ArrayList<>();
 
+    @NotNull(message = "Registered by is required")
     @ManyToOne
     @JoinColumn(name = "registered_by")
     private User registeredBy;
+
+    public Product(String name, String brand, String model, BigDecimal price, Integer quantity) {
+        this.name = name;
+        this.brand = brand;
+        this.model = model;
+        this.price = price;
+        this.quantity = quantity;
+        this.active = true;
+    }
 }

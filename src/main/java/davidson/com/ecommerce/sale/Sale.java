@@ -1,6 +1,6 @@
 package davidson.com.ecommerce.sale;
 
-import davidson.com.ecommerce.SaleItem.SaleItem;
+import davidson.com.ecommerce.sale_item.SaleItem;
 import davidson.com.ecommerce.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,7 +10,6 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter

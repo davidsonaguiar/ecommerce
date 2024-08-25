@@ -1,4 +1,4 @@
-package davidson.com.ecommerce.SaleItem;
+package davidson.com.ecommerce.sale_item;
 
 import davidson.com.ecommerce.product.Product;
 import davidson.com.ecommerce.sale.Sale;
