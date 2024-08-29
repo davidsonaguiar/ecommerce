@@ -1,11 +1,12 @@
-package davidson.com.ecommerce.product;
+package davidson.com.ecommerce.resources.product;
 
-import davidson.com.ecommerce.product.dto.request.CreateProductRequestDto;
-import davidson.com.ecommerce.product.dto.request.UpdateProductRequestDto;
+import davidson.com.ecommerce.resources.product.dto.request.CreateProductRequestDto;
+import davidson.com.ecommerce.resources.product.dto.request.UpdateProductRequestDto;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,7 +23,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid CreateProductRequestDto dto) {
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid CreateProductRequestDto dto, Authentication authentication) {
+        System.out.println(authentication.getDetails());
         Product product = productService.save(dto);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

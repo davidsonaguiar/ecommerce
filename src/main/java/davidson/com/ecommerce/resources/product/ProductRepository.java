@@ -1,4 +1,4 @@
-package davidson.com.ecommerce.product;
+package davidson.com.ecommerce.resources.product;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;

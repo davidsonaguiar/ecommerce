@@ -1,7 +1,7 @@
-package davidson.com.ecommerce.sale_item;
+package davidson.com.ecommerce.resources.sale_item;
 
-import davidson.com.ecommerce.product.Product;
-import davidson.com.ecommerce.sale.Sale;
+import davidson.com.ecommerce.resources.product.Product;
+import davidson.com.ecommerce.resources.sale.Sale;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

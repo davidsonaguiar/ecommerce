@@ -1,7 +1,7 @@
-package davidson.com.ecommerce.sale;
+package davidson.com.ecommerce.resources.sale;
 
-import davidson.com.ecommerce.sale_item.SaleItem;
-import davidson.com.ecommerce.user.User;
+import davidson.com.ecommerce.resources.sale_item.SaleItem;
+import davidson.com.ecommerce.resources.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

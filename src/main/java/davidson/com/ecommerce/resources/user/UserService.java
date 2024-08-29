@@ -1,4 +1,42 @@
 package davidson.com.ecommerce.resources.user;
 
-public class UserService {
+import davidson.com.ecommerce.exceptions.ContentConflictException;
+import davidson.com.ecommerce.resources.user.dtos.request.SignupRequestDto;
+import davidson.com.ecommerce.resources.user.enums.Role;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService implements UserDetailsService {
+    private final UserRespository userRespository;
+
+    public UserService(UserRespository userRespository) {
+        this.userRespository = userRespository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRespository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRespository.existsByEmail(email);
+    }
+
+    public User signup(SignupRequestDto dto) {
+        if(existsByEmail(dto.email())) throw new ContentConflictException("Email already exists");
+        String encodedPassword = new BCryptPasswordEncoder().encode(dto.password());
+        User user = new User(dto.name(), dto.email(), encodedPassword, Role.CLIENT);
+        return userRespository.save(user);
+    }
+
+    public User signupAdmin(SignupRequestDto dto) {
+        if(existsByEmail(dto.email())) throw new ContentConflictException("Email already exists");
+        String encodedPassword = new BCryptPasswordEncoder().encode(dto.password());
+        User user = new User(dto.name(), dto.email(), encodedPassword, Role.ADMIN);
+        return userRespository.save(user);
+    }
 }

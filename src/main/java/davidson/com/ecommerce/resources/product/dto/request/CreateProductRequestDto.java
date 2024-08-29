@@ -1,6 +1,6 @@
-package davidson.com.ecommerce.product.dto.request;
+package davidson.com.ecommerce.resources.product.dto.request;
 
-import davidson.com.ecommerce.product.Product;
+import davidson.com.ecommerce.resources.product.Product;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;

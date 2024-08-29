@@ -1,17 +1,16 @@
-package davidson.com.ecommerce.product;
+package davidson.com.ecommerce.resources.product;
 
-import davidson.com.ecommerce.category.Category;
-import davidson.com.ecommerce.category.CategoryRepository;
+import davidson.com.ecommerce.resources.category.Category;
+import davidson.com.ecommerce.resources.category.CategoryRepository;
 import davidson.com.ecommerce.exceptions.ContentConflictException;
 import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
-import davidson.com.ecommerce.product.dto.request.CreateProductRequestDto;
-import davidson.com.ecommerce.product.dto.request.UpdateProductRequestDto;
-import davidson.com.ecommerce.user.User;
-import davidson.com.ecommerce.user.UserRespository;
+import davidson.com.ecommerce.resources.product.dto.request.CreateProductRequestDto;
+import davidson.com.ecommerce.resources.product.dto.request.UpdateProductRequestDto;
+import davidson.com.ecommerce.resources.user.User;
+import davidson.com.ecommerce.resources.user.UserRespository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

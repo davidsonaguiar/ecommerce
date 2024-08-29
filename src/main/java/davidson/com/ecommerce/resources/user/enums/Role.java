@@ -1,4 +1,4 @@
-package davidson.com.ecommerce.user.enums;
+package davidson.com.ecommerce.resources.user.enums;
 
 import lombok.Getter;
 

@@ -2,7 +2,7 @@ package davidson.com.ecommerce.resources.user.dtos.request;
 
 import jakarta.validation.constraints.NotNull;
 
-public record LoginRequestDto(
+public record SigninRequestDto(
     @NotNull(message = "Email is required")
     String email,
 

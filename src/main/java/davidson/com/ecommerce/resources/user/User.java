@@ -1,6 +1,7 @@
-package davidson.com.ecommerce.user;
+package davidson.com.ecommerce.resources.user;
 
-import davidson.com.ecommerce.user.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import davidson.com.ecommerce.resources.user.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,8 +10,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -18,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,17 +38,27 @@ public class User implements Serializable {
 
     @NotNull(message = "Email is required")
     @Email(message = "Email is invalid")
+    @Column(nullable = false, unique = true)
     private String email;
 
     @NotNull(message = "Password is required")
+    @Column(nullable = false)
     private String password;
 
     @NotNull(message = "Role is required")
+    @Column(nullable = false)
     private Integer role;
 
     @ManyToOne
     @JoinColumn(name = "registered_by")
     private User registeredBy;
+
+    public User(String name, String email, String password, Role role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role.getValue();
+    }
 
     public Role getRole() {
         return Role.fromInteger(role);
@@ -50,5 +66,18 @@ public class User implements Serializable {
 
     public void setRole(Role role) {
         this.role = role.getValue();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if (role == Role.ADMIN.getValue()) authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_CLIENT"));
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 }

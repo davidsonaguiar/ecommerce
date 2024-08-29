@@ -1,7 +1,7 @@
-package davidson.com.ecommerce.category;
+package davidson.com.ecommerce.resources.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import davidson.com.ecommerce.product.Product;
+import davidson.com.ecommerce.resources.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -27,7 +27,7 @@ public class Category implements Serializable {
 
     @NotBlank(message = "Name is required")
     @Size(min = 2, max = 100, message = "Name must be between 3 and 100 characters")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @JsonIgnore

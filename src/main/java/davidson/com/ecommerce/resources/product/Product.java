@@ -1,8 +1,8 @@
-package davidson.com.ecommerce.product;
+package davidson.com.ecommerce.resources.product;
 
-import davidson.com.ecommerce.sale_item.SaleItem;
-import davidson.com.ecommerce.category.Category;
-import davidson.com.ecommerce.user.User;
+import davidson.com.ecommerce.resources.sale_item.SaleItem;
+import davidson.com.ecommerce.resources.category.Category;
+import davidson.com.ecommerce.resources.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

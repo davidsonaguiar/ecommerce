@@ -1,4 +1,4 @@
-package davidson.com.ecommerce.product.dto.request;
+package davidson.com.ecommerce.resources.product.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
