@@ -9,8 +9,11 @@ import davidson.com.ecommerce.resources.product.dto.request.UpdateProductRequest
 import davidson.com.ecommerce.resources.user.User;
 import davidson.com.ecommerce.resources.user.UserRespository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 
+import java.beans.PropertyDescriptor;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +29,7 @@ public class ProductService {
         this.userRespository = userRespository;
     }
 
-    public Product save(CreateProductRequestDto dto) {
+    public Product save(CreateProductRequestDto dto, User admin) {
         Optional<Product> exists = productRepository.findByNameAndBrandAndModel(dto.name(), dto.brand(), dto.model());
         if (exists.isPresent()) throw new ContentConflictException("Product already exists");
 
@@ -35,9 +38,6 @@ public class ProductService {
                 .map(categoryId -> categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + categoryId)))
                 .toList();
-
-        User admin = userRespository.findById(dto.adminId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + dto.adminId()));
 
         Product product = dto.toEntity();
         product.setCategories(categories);
@@ -58,7 +58,6 @@ public class ProductService {
         Product productToUpdate = getdById(id);
 
         Optional<Product> exists = productRepository.findByNameAndBrandAndModel(dto.name(), dto.brand(), dto.model());
-        System.out.println(exists.get());
         if(exists.isPresent() && exists.get().getId() != id) throw new ContentConflictException("Product already exists");
 
         BeanUtils.copyProperties(dto, productToUpdate, "id");

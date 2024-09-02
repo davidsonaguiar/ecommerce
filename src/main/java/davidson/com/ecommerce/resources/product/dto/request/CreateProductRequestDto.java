@@ -12,7 +12,7 @@ public record CreateProductRequestDto(
         String name,
 
         @NotBlank(message = "Brand is required")
-        @Size(min = 3, max = 100, message = "Brand must be between 3 and 100 characters")
+        @Size(min = 2, max = 100, message = "Brand must be between 3 and 100 characters")
         String brand,
 
         @NotBlank(message = "Model is required")
@@ -28,10 +28,7 @@ public record CreateProductRequestDto(
         Integer quantity,
 
         @NotEmpty(message = "Categories is required")
-        List<Long> categoriesIds,
-
-        @NotNull(message = "adminId is required")
-        Long adminId) {
+        List<Long> categoriesIds) {
 
     public Product toEntity() {
         return new Product(name, brand, model, price, quantity);

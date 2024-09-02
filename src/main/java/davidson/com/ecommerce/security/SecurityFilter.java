@@ -1,12 +1,15 @@
 package davidson.com.ecommerce.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
+import davidson.com.ecommerce.exceptions.handlers.StandardError;
 import davidson.com.ecommerce.resources.user.UserRespository;
 import davidson.com.ecommerce.resources.user.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,14 +32,31 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = getToken(request);
-        if(token != null) {
-            String email = tokenService.validateToken(token);
-            UserDetails user = userRespository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            String token = getToken(request);
+            if (token != null) {
+                String email = tokenService.validateToken(token);
+                UserDetails user = userRespository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
+        catch (Exception exception) {
+            exception.printStackTrace();
+            Integer status = HttpStatus.UNAUTHORIZED.value();
+
+            StandardError error = new StandardError();
+            error.setStatus(status);
+            error.setMessage("You are not authenticated");
+
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(error);
+
+            response.setStatus(status);
+            response.setContentType("application/json");
+            response.getWriter().write(json);
+        }
     }
 
     private String getToken(HttpServletRequest request) {

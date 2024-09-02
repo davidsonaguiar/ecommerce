@@ -33,10 +33,11 @@ public class UserService implements UserDetailsService {
         return userRespository.save(user);
     }
 
-    public User signupAdmin(SignupRequestDto dto) {
+    public User signupAdmin(SignupRequestDto dto, User admin) {
         if(existsByEmail(dto.email())) throw new ContentConflictException("Email already exists");
         String encodedPassword = new BCryptPasswordEncoder().encode(dto.password());
         User user = new User(dto.name(), dto.email(), encodedPassword, Role.ADMIN);
+        user.setRegisteredBy(admin);
         return userRespository.save(user);
     }
 }

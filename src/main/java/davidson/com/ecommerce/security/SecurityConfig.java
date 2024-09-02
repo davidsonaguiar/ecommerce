@@ -1,5 +1,7 @@
 package davidson.com.ecommerce.security;
 
+import davidson.com.ecommerce.exceptions.handlers.CustomAccessDeniedHandler;
+import davidson.com.ecommerce.exceptions.handlers.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -39,10 +41,15 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
 
                 .anyRequest().authenticated()
-            );
-        return http
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+            )
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling((exceptionHandling) -> {
+                exceptionHandling
+                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                    .accessDeniedHandler(new CustomAccessDeniedHandler());
+            });
+
+        return http.build();
     }
 
     @Bean

@@ -35,7 +35,7 @@ public class Product implements Serializable {
     private String name;
 
     @NotBlank(message = "Brand is required")
-    @Size(min = 3, max = 100, message = "Brand must be between 3 and 100 characters")
+    @Size(min = 2, max = 100, message = "Brand must be between 3 and 100 characters")
     @Column(nullable = false)
     private String brand;
 
