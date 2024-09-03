@@ -1,5 +1,6 @@
 package davidson.com.ecommerce.resources.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import davidson.com.ecommerce.resources.sale_item.SaleItem;
 import davidson.com.ecommerce.resources.category.Category;
 import davidson.com.ecommerce.resources.user.User;
@@ -67,6 +68,7 @@ public class Product implements Serializable {
     )
     private List<Category> categories = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "id.product")
     private List<SaleItem> saleItems = new ArrayList<>();
 

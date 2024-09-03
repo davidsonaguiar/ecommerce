@@ -10,13 +10,13 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.io.IOException;
 
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomAuthenticationHandlerException implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         Integer status = HttpStatus.UNAUTHORIZED.value();
 
-        StandardError error = new StandardError();
+        StandardException error = new StandardException();
         error.setStatus(status);
         error.setMessage("You are not authenticated");
 

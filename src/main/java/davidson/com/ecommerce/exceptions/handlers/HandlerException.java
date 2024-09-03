@@ -9,16 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class HandlerError  {
+public class HandlerException {
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<StandardError> handleException(ResourceNotFoundException exception) {
+    public ResponseEntity<StandardException> handleException(ResourceNotFoundException exception) {
         HttpStatus status = HttpStatus.NOT_FOUND;
 
-        StandardError error = new StandardError();
+        StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage(exception.getMessage());
 
@@ -26,10 +27,10 @@ public class HandlerError  {
     }
 
     @ExceptionHandler(ContentConflictException.class)
-    public ResponseEntity<StandardError> handleException(ContentConflictException exception) {
+    public ResponseEntity<StandardException> handleException(ContentConflictException exception) {
         HttpStatus status = HttpStatus.CONFLICT;
 
-        StandardError error = new StandardError();
+        StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage(exception.getMessage());
 
@@ -37,10 +38,10 @@ public class HandlerError  {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<StandardError> handleException(UnauthorizedException exception) {
+    public ResponseEntity<StandardException> handleException(UnauthorizedException exception) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        StandardError error = new StandardError();
+        StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage(exception.getMessage());
 
@@ -48,10 +49,10 @@ public class HandlerError  {
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<StandardError> handleException(ForbiddenException exception) {
+    public ResponseEntity<StandardException> handleException(ForbiddenException exception) {
         HttpStatus status = HttpStatus.FORBIDDEN;
 
-        StandardError error = new StandardError();
+        StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage(exception.getMessage());
 
@@ -59,10 +60,10 @@ public class HandlerError  {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<StandardError> handleException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<StandardException> handleException(MethodArgumentNotValidException exception) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
-        StandardError error = new StandardError();
+        StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage(exception.getAllErrors().stream()
                 .map(errorObject -> errorObject.getDefaultMessage())
@@ -72,14 +73,25 @@ public class HandlerError  {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<StandardError> handleException(Exception exception) {
+    public ResponseEntity<StandardException> handleException(Exception exception) {
         exception.printStackTrace();
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        StandardError error = new StandardError();
+        StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage(exception.getMessage());
         error.setTimestamp(System.currentTimeMillis());
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<StandardException> handleException(NoResourceFoundException exception) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage("Resource not found");
 
         return ResponseEntity.status(status).body(error);
     }

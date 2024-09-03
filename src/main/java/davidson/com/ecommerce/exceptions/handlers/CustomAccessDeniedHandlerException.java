@@ -9,10 +9,10 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
 
-public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+public class CustomAccessDeniedHandlerException implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-        StandardError error = new StandardError();
+        StandardException error = new StandardException();
         error.setStatus(HttpStatus.FORBIDDEN.value());
         error.setMessage("Access Denied");
 

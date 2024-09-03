@@ -2,7 +2,7 @@ package davidson.com.ecommerce.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
-import davidson.com.ecommerce.exceptions.handlers.StandardError;
+import davidson.com.ecommerce.exceptions.handlers.StandardException;
 import davidson.com.ecommerce.resources.user.UserRespository;
 import davidson.com.ecommerce.resources.user.UserService;
 import jakarta.servlet.FilterChain;
@@ -43,10 +43,9 @@ public class SecurityFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
         catch (Exception exception) {
-            exception.printStackTrace();
             Integer status = HttpStatus.UNAUTHORIZED.value();
 
-            StandardError error = new StandardError();
+            StandardException error = new StandardException();
             error.setStatus(status);
             error.setMessage("You are not authenticated");
 

@@ -31,6 +31,6 @@ public class Sale implements Serializable {
     @JoinColumn(name = "sold_to")
     private User soldTo;
 
-    @OneToMany(mappedBy = "id.sale")
+    @OneToMany(mappedBy = "id.sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SaleItem> saleItems = new HashSet<>();
 }

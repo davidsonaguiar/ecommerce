@@ -1,7 +1,7 @@
 package davidson.com.ecommerce.security;
 
-import davidson.com.ecommerce.exceptions.handlers.CustomAccessDeniedHandler;
-import davidson.com.ecommerce.exceptions.handlers.CustomAuthenticationEntryPoint;
+import davidson.com.ecommerce.exceptions.handlers.CustomAccessDeniedHandlerException;
+import davidson.com.ecommerce.exceptions.handlers.CustomAuthenticationHandlerException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -45,8 +45,8 @@ public class SecurityConfig {
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling((exceptionHandling) -> {
                 exceptionHandling
-                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                    .accessDeniedHandler(new CustomAccessDeniedHandler());
+                    .authenticationEntryPoint(new CustomAuthenticationHandlerException())
+                    .accessDeniedHandler(new CustomAccessDeniedHandlerException());
             });
 
         return http.build();

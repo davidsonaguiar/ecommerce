@@ -1,5 +1,6 @@
 package davidson.com.ecommerce.resources.sale_item;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import davidson.com.ecommerce.resources.product.Product;
 import davidson.com.ecommerce.resources.sale.Sale;
 import jakarta.persistence.*;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 public class SaleItem implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     @EmbeddedId
     private SaleItemPk id = new SaleItemPk();
 
@@ -38,6 +40,7 @@ public class SaleItem implements Serializable {
         this.price = price;
     }
 
+    @JsonIgnore
     public Sale getSale() {
         return id.getSale();
     }
