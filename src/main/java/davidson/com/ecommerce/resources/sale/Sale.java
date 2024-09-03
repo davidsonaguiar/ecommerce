@@ -36,13 +36,11 @@ public class Sale implements Serializable {
 
     @Override
     public String toString() {
-        return """
-                Sale: {
-                    id=%d,
-                    soldAt=%s,
-                    soldTo=%s,
-                    saleItems=%s
-                }
-                """.formatted(id, soldAt, soldTo, saleItems);
+        return "Sale: { " +
+                "id = " + id +
+                ", soldAt = " + soldAt +
+                ", soldTo = " + soldTo +
+                ", saleItems = " + saleItems +
+                " }";
     }
 }

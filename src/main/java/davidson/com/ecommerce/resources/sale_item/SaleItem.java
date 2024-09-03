@@ -51,12 +51,10 @@ public class SaleItem implements Serializable {
 
     @Override
     public String toString() {
-        return """
-                SaleItem: {
-                    product=%s,
-                    quantity=%d,
-                    price=%s
-                }
-                """.formatted(id.getProduct(), quantity, price);
+        return "SaleItem: { " +
+                "product = " + id.getProduct() +
+                ", quantity = " + quantity +
+                ", price = " + price +
+                " }";
     }
 }

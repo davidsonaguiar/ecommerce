@@ -88,18 +88,15 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return """
-                Product: {
-                    id=%d,
-                    name='%s',
-                    brand='%s',
-                    model='%s',
-                    price=%s,
-                    quantity=%d,
-                    active=%s,
-                    categories=%s,
-                    registeredBy=%s
-                }
-                """.formatted(id, name, brand, model, price, quantity, active, categories, saleItems, registeredBy);
+        return "Product: { " +
+                "categories = " + categories +
+                ", active = " + active +
+                ", quantity = " + quantity +
+                ", price = " + price +
+                ", model = '" + model + '\'' +
+                ", brand = '" + brand + '\'' +
+                ", name = '" + name + '\'' +
+                ", id = " + id +
+                " }";
     }
 }

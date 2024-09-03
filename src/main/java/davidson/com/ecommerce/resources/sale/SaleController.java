@@ -32,6 +32,8 @@ public class SaleController {
 
         Sale sale = saleService.create(dto, admin);
 
+        System.out.println("Sale created: " + sale);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")

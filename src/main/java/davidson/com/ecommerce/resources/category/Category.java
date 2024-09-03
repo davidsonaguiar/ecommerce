@@ -41,11 +41,9 @@ public class Category implements Serializable {
 
     @Override
     public String toString() {
-        return """
-                Category: {
-                    id=%d,
-                    name='%s'
-                }
-                """.formatted(id, name);
+        return "Category: { " +
+                "name = '" + name + '\'' +
+                ", id= " + id +
+                " }";
     }
 }

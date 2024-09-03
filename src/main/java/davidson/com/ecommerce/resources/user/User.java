@@ -83,13 +83,13 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public String toString() {
-        return """
-                User: {
-                    id=%d,
-                    name=%s,
-                    email=%s,
-                    role=%s
-                }
-                """.formatted(id, name, email, getRole());
+        return "User: { " +
+                "id = " + id +
+                ", name = '" + name + '\'' +
+                ", email = '" + email + '\'' +
+                ", password = '" + password + '\'' +
+                ", role = " + role +
+                ", registeredBy = " + registeredBy +
+                " }";
     }
 }
