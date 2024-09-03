@@ -33,4 +33,16 @@ public class Sale implements Serializable {
 
     @OneToMany(mappedBy = "id.sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SaleItem> saleItems = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return """
+                Sale: {
+                    id=%d,
+                    soldAt=%s,
+                    soldTo=%s,
+                    saleItems=%s
+                }
+                """.formatted(id, soldAt, soldTo, saleItems);
+    }
 }

@@ -85,4 +85,21 @@ public class Product implements Serializable {
         this.quantity = quantity;
         this.active = true;
     }
+
+    @Override
+    public String toString() {
+        return """
+                Product: {
+                    id=%d,
+                    name='%s',
+                    brand='%s',
+                    model='%s',
+                    price=%s,
+                    quantity=%d,
+                    active=%s,
+                    categories=%s,
+                    registeredBy=%s
+                }
+                """.formatted(id, name, brand, model, price, quantity, active, categories, saleItems, registeredBy);
+    }
 }

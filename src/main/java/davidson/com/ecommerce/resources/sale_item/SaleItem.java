@@ -48,4 +48,15 @@ public class SaleItem implements Serializable {
     public Product getProduct() {
         return id.getProduct();
     }
+
+    @Override
+    public String toString() {
+        return """
+                SaleItem: {
+                    product=%s,
+                    quantity=%d,
+                    price=%s
+                }
+                """.formatted(id.getProduct(), quantity, price);
+    }
 }

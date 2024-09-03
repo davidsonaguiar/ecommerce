@@ -38,4 +38,14 @@ public class Category implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private List<Product> products = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return """
+                Category: {
+                    id=%d,
+                    name='%s'
+                }
+                """.formatted(id, name);
+    }
 }

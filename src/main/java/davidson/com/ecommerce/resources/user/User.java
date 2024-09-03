@@ -80,4 +80,16 @@ public class User implements Serializable, UserDetails {
     public String getUsername() {
         return email;
     }
+
+    @Override
+    public String toString() {
+        return """
+                User: {
+                    id=%d,
+                    name=%s,
+                    email=%s,
+                    role=%s
+                }
+                """.formatted(id, name, email, getRole());
+    }
 }
