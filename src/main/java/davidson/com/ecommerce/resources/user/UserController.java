@@ -45,8 +45,7 @@ public class UserController {
     @PostMapping(value = "/signup")
     public ResponseEntity<SignupResponseDto> signup(@RequestBody @Valid SignupRequestDto dto) {
         User user = userService.signup(dto);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SignupResponseDto.fromEntity(user));
     }
 

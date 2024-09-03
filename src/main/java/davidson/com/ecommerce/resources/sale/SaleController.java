@@ -2,6 +2,7 @@ package davidson.com.ecommerce.resources.sale;
 
 import davidson.com.ecommerce.resources.sale.dtos.request.CreateSaleRequestDto;
 import davidson.com.ecommerce.resources.sale.dtos.request.UpdateSaleRequestDto;
+import davidson.com.ecommerce.resources.sale.dtos.response.GetSaleResponseDto;
 import davidson.com.ecommerce.resources.sale_item.dto.request.UpdateSaleItemDto;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.validation.Valid;
@@ -43,9 +44,9 @@ public class SaleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Sale>> getSale(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<GetSaleResponseDto>> getSale(@PathVariable Long id) {
         Sale sale = saleService.findById(id);
-        EntityModel<Sale> entityModel = EntityModel.of(sale);
+        EntityModel<GetSaleResponseDto> entityModel = EntityModel.of(GetSaleResponseDto.fromEntity(sale));
         WebMvcLinkBuilder linkToSales = WebMvcLinkBuilder
                 .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllSales());
         entityModel.add(linkToSales.withRel("allSales"));
@@ -53,12 +54,12 @@ public class SaleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EntityModel<Sale>>> getAllSales() {
+    public ResponseEntity<List<EntityModel<GetSaleResponseDto>>> getAllSales() {
         List<Sale> sales = saleService.findAll();
-        List<EntityModel<Sale>> entityModels = sales
+        List<EntityModel<GetSaleResponseDto>> entityModels = sales
                 .stream()
                 .map((sale) -> {
-                    EntityModel<Sale> entityModel = EntityModel.of(sale);
+                    EntityModel<GetSaleResponseDto> entityModel = EntityModel.of(GetSaleResponseDto.fromEntity(sale));
                     WebMvcLinkBuilder linkToSale = WebMvcLinkBuilder
                             .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getSale(sale.getId()));
                     entityModel.add(linkToSale.withRel("sale"));
@@ -70,9 +71,13 @@ public class SaleController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Sale> updateSale(@PathVariable Long id, @RequestBody @Valid UpdateSaleRequestDto dto) {
+    public ResponseEntity<EntityModel<GetSaleResponseDto>> updateSale(@PathVariable Long id, @RequestBody @Valid UpdateSaleRequestDto dto) {
         Sale sale = saleService.update(id, dto);
-        return ResponseEntity.ok(sale);
+        EntityModel<GetSaleResponseDto> entityModel = EntityModel.of(GetSaleResponseDto.fromEntity(sale));
+        WebMvcLinkBuilder linkToSales = WebMvcLinkBuilder
+                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllSales());
+        entityModel.add(linkToSales.withRel("allSales"));
+        return ResponseEntity.ok(entityModel);
     }
 
     @DeleteMapping("/{id}")

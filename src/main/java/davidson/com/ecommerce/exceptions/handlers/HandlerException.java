@@ -95,4 +95,15 @@ public class HandlerException {
 
         return ResponseEntity.status(status).body(error);
     }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<StandardException> handleException(NullPointerException exception) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage("Internal server error");
+
+        return ResponseEntity.status(status).body(error);
+    }
 }

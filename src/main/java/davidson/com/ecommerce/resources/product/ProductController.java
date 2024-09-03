@@ -2,6 +2,7 @@ package davidson.com.ecommerce.resources.product;
 
 import davidson.com.ecommerce.resources.product.dto.request.CreateProductRequestDto;
 import davidson.com.ecommerce.resources.product.dto.request.UpdateProductRequestDto;
+import davidson.com.ecommerce.resources.product.dto.response.GetProductResponseDto;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
@@ -40,9 +41,9 @@ public class ProductController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Product>> getProduct(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<GetProductResponseDto>> getProduct(@PathVariable Long id) {
         Product product = productService.getdById(id);
-        EntityModel<Product> entityModel = EntityModel.of(product);
+        EntityModel<GetProductResponseDto> entityModel = EntityModel.of(GetProductResponseDto.fromEntity(product));
         WebMvcLinkBuilder linkToProducts = WebMvcLinkBuilder
                 .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllProducts());
         entityModel.add(linkToProducts.withRel("allProducts"));
@@ -51,11 +52,11 @@ public class ProductController {
 
 
     @GetMapping
-    public ResponseEntity<List<EntityModel<Product>>> getAllProducts() {
+    public ResponseEntity<List<EntityModel<GetProductResponseDto>>> getAllProducts() {
         List<Product> products = productService.getAll();
         if (products.isEmpty()) return ResponseEntity.ok(List.of());
-        List<EntityModel<Product>> entityModels = products.stream().map(product -> {
-            EntityModel<Product> entityModel = EntityModel.of(product);
+        List<EntityModel<GetProductResponseDto>> entityModels = products.stream().map(product -> {
+            EntityModel<GetProductResponseDto> entityModel = EntityModel.of(GetProductResponseDto.fromEntity(product));
             WebMvcLinkBuilder linkToProduct = WebMvcLinkBuilder
                     .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getProduct(product.getId()));
             entityModel.add(linkToProduct.withRel("product"));
@@ -66,9 +67,9 @@ public class ProductController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<Product>> updateProduct(@PathVariable Long id, @RequestBody @Valid UpdateProductRequestDto dto) {
+    public ResponseEntity<EntityModel<GetProductResponseDto>> updateProduct(@PathVariable Long id, @RequestBody @Valid UpdateProductRequestDto dto) {
         Product product = productService.update(id, dto);
-        EntityModel<Product> entityModel = EntityModel.of(product);
+        EntityModel<GetProductResponseDto> entityModel = EntityModel.of(GetProductResponseDto.fromEntity(product));
         WebMvcLinkBuilder linkToAllProducts = WebMvcLinkBuilder
                 .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllProducts());
         entityModel.add(linkToAllProducts.withRel("allProducts"));
