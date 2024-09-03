@@ -26,30 +26,31 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(customizer -> customizer
-                .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
+        return http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(customizer -> customizer
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                .requestMatchers(HttpMethod.POST, "/users/signin").permitAll()
-                .requestMatchers(HttpMethod.POST, "/users/signup").permitAll()
-                .requestMatchers(HttpMethod.POST, "/users/signup/admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
 
-                .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/users/signin").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/signup/admin").hasRole("ADMIN")
 
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling((exceptionHandling) -> {
-                exceptionHandling
-                    .authenticationEntryPoint(new CustomAuthenticationHandlerException())
-                    .accessDeniedHandler(new CustomAccessDeniedHandlerException());
-            });
+                        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
 
-        return http.build();
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling((exceptionHandling) -> {
+                    exceptionHandling
+                            .authenticationEntryPoint(new CustomAuthenticationHandlerException())
+                            .accessDeniedHandler(new CustomAccessDeniedHandlerException());
+                })
+                .build();
     }
 
     @Bean

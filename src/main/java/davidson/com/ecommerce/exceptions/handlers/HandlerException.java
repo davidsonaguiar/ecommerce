@@ -6,6 +6,7 @@ import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
 import davidson.com.ecommerce.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -103,6 +104,17 @@ public class HandlerException {
         StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage("Internal server error");
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<StandardException> handleException(BadCredentialsException exception) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage("Email or password invalid.");
 
         return ResponseEntity.status(status).body(error);
     }
