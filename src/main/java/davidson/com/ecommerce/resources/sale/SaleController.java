@@ -1,5 +1,6 @@
 package davidson.com.ecommerce.resources.sale;
 
+import davidson.com.ecommerce.common.LinkBuilder;
 import davidson.com.ecommerce.resources.sale.dtos.request.CreateSaleRequestDto;
 import davidson.com.ecommerce.resources.sale.dtos.request.UpdateSaleRequestDto;
 import davidson.com.ecommerce.resources.sale.dtos.response.GetSaleResponseDto;
@@ -7,6 +8,7 @@ import davidson.com.ecommerce.resources.sale_item.dto.request.UpdateSaleItemDto;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -21,9 +23,11 @@ import java.util.List;
 @RequestMapping("/sales")
 public class SaleController {
     private final SaleService saleService;
+    private final LinkBuilder linkBuilder;
 
-    public SaleController(SaleService saleService) {
+    public SaleController(SaleService saleService, LinkBuilder linkBuilder) {
         this.saleService = saleService;
+        this.linkBuilder = linkBuilder;
     }
 
     @PostMapping
@@ -32,8 +36,6 @@ public class SaleController {
         User admin = (User) authentication.getPrincipal();
 
         Sale sale = saleService.create(dto, admin);
-
-        System.out.println("Sale created: " + sale);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -47,9 +49,11 @@ public class SaleController {
     public ResponseEntity<EntityModel<GetSaleResponseDto>> getSale(@PathVariable Long id) {
         Sale sale = saleService.findById(id);
         EntityModel<GetSaleResponseDto> entityModel = EntityModel.of(GetSaleResponseDto.fromEntity(sale));
-        WebMvcLinkBuilder linkToSales = WebMvcLinkBuilder
-                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllSales());
-        entityModel.add(linkToSales.withRel("allSales"));
+        entityModel.add(linkBuilder.linkToSales().withRel("allSales"));
+        entityModel.add(linkBuilder.linkToUser(sale.getSoldTo().getId()).withRel("client"));
+        sale.getSaleItems().forEach(saleItem -> {
+            entityModel.add(linkBuilder.linkToProduct(saleItem.getProduct().getId()).withRel("products"));
+        });
         return ResponseEntity.ok(entityModel);
     }
 
@@ -60,9 +64,11 @@ public class SaleController {
                 .stream()
                 .map((sale) -> {
                     EntityModel<GetSaleResponseDto> entityModel = EntityModel.of(GetSaleResponseDto.fromEntity(sale));
-                    WebMvcLinkBuilder linkToSale = WebMvcLinkBuilder
-                            .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getSale(sale.getId()));
-                    entityModel.add(linkToSale.withRel("sale"));
+                    entityModel.add(linkBuilder.linkToSale(sale.getId()).withRel("sale"));
+                    entityModel.add(linkBuilder.linkToUser(sale.getSoldTo().getId()).withRel("client"));
+                    sale.getSaleItems().forEach(saleItem -> {
+                        entityModel.add(linkBuilder.linkToProduct(saleItem.getProduct().getId()).withRel("products"));
+                    });
                     return entityModel;
                 })
                 .toList();
@@ -74,9 +80,11 @@ public class SaleController {
     public ResponseEntity<EntityModel<GetSaleResponseDto>> updateSale(@PathVariable Long id, @RequestBody @Valid UpdateSaleRequestDto dto) {
         Sale sale = saleService.update(id, dto);
         EntityModel<GetSaleResponseDto> entityModel = EntityModel.of(GetSaleResponseDto.fromEntity(sale));
-        WebMvcLinkBuilder linkToSales = WebMvcLinkBuilder
-                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllSales());
-        entityModel.add(linkToSales.withRel("allSales"));
+        entityModel.add(linkBuilder.linkToSales().withRel("allSales"));
+        entityModel.add(linkBuilder.linkToUser(sale.getSoldTo().getId()).withRel("client"));
+        sale.getSaleItems().forEach(saleItem -> {
+            entityModel.add(linkBuilder.linkToProduct(saleItem.getProduct().getId()).withRel("products"));
+        });
         return ResponseEntity.ok(entityModel);
     }
 

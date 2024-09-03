@@ -1,5 +1,6 @@
 package davidson.com.ecommerce.resources.product;
 
+import davidson.com.ecommerce.common.LinkBuilder;
 import davidson.com.ecommerce.resources.product.dto.request.CreateProductRequestDto;
 import davidson.com.ecommerce.resources.product.dto.request.UpdateProductRequestDto;
 import davidson.com.ecommerce.resources.product.dto.response.GetProductResponseDto;
@@ -20,9 +21,11 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
+    private final LinkBuilder linkBuilder;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, LinkBuilder linkBuilder) {
         this.productService = productService;
+        this.linkBuilder = linkBuilder;
     }
 
     @PostMapping
@@ -44,9 +47,8 @@ public class ProductController {
     public ResponseEntity<EntityModel<GetProductResponseDto>> getProduct(@PathVariable Long id) {
         Product product = productService.getdById(id);
         EntityModel<GetProductResponseDto> entityModel = EntityModel.of(GetProductResponseDto.fromEntity(product));
-        WebMvcLinkBuilder linkToProducts = WebMvcLinkBuilder
-                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllProducts());
-        entityModel.add(linkToProducts.withRel("allProducts"));
+        entityModel.add(linkBuilder.linkToProducts().withRel("allProducts"));
+        entityModel.add(linkBuilder.linkToUser(product.getRegisteredBy().getId()).withRel("admin"));
         return ResponseEntity.ok(entityModel);
     }
 
@@ -57,9 +59,8 @@ public class ProductController {
         if (products.isEmpty()) return ResponseEntity.ok(List.of());
         List<EntityModel<GetProductResponseDto>> entityModels = products.stream().map(product -> {
             EntityModel<GetProductResponseDto> entityModel = EntityModel.of(GetProductResponseDto.fromEntity(product));
-            WebMvcLinkBuilder linkToProduct = WebMvcLinkBuilder
-                    .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getProduct(product.getId()));
-            entityModel.add(linkToProduct.withRel("product"));
+            entityModel.add(linkBuilder.linkToProduct(product.getId()).withSelfRel());
+            entityModel.add(linkBuilder.linkToUser(product.getRegisteredBy().getId()).withRel("admin"));
             return entityModel;
         }).toList();
         return ResponseEntity.ok(entityModels);
@@ -70,9 +71,8 @@ public class ProductController {
     public ResponseEntity<EntityModel<GetProductResponseDto>> updateProduct(@PathVariable Long id, @RequestBody @Valid UpdateProductRequestDto dto) {
         Product product = productService.update(id, dto);
         EntityModel<GetProductResponseDto> entityModel = EntityModel.of(GetProductResponseDto.fromEntity(product));
-        WebMvcLinkBuilder linkToAllProducts = WebMvcLinkBuilder
-                .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllProducts());
-        entityModel.add(linkToAllProducts.withRel("allProducts"));
+        entityModel.add(linkBuilder.linkToProduct(product.getId()).withSelfRel());
+        entityModel.add(linkBuilder.linkToUser(product.getRegisteredBy().getId()).withRel("admin"));
         return ResponseEntity.ok(entityModel);
     }
 

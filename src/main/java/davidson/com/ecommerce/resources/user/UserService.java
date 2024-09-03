@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService implements UserDetailsService {
     private final UserRespository userRespository;
@@ -39,5 +41,13 @@ public class UserService implements UserDetailsService {
         User user = new User(dto.name(), dto.email(), encodedPassword, Role.ADMIN);
         user.setRegisteredBy(admin);
         return userRespository.save(user);
+    }
+
+    public User getById(Long id) {
+        return userRespository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public List<User> getAll() {
+        return userRespository.findAll();
     }
 }
