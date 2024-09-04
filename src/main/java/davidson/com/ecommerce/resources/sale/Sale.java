@@ -1,5 +1,6 @@
 package davidson.com.ecommerce.resources.sale;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import davidson.com.ecommerce.resources.sale_item.SaleItem;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.persistence.*;

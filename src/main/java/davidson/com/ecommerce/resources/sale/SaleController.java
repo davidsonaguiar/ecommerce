@@ -7,6 +7,8 @@ import davidson.com.ecommerce.resources.sale.dtos.response.GetSaleResponseDto;
 import davidson.com.ecommerce.resources.sale_item.dto.request.UpdateSaleItemDto;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
+import org.springframework.cglib.core.Local;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -73,6 +77,13 @@ public class SaleController {
                 })
                 .toList();
         return ResponseEntity.ok(entityModels);
+    }
+
+    @GetMapping("/reportByDate/{date}")
+    public ResponseEntity<EntityModel<GetSaleResponseDto>> getSaleReportByDate(@PathVariable String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        List<Sale> sales = saleService.findByDate(localDate.atStartOfDay());
+        return null;
     }
 
 

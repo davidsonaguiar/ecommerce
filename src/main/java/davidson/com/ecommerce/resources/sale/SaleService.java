@@ -2,6 +2,7 @@ package davidson.com.ecommerce.resources.sale;
 
 import davidson.com.ecommerce.exceptions.ContentConflictException;
 import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
+import davidson.com.ecommerce.exceptions.UnprocessableException;
 import davidson.com.ecommerce.resources.product.Product;
 import davidson.com.ecommerce.resources.product.ProductRepository;
 import davidson.com.ecommerce.resources.sale.dtos.request.CreateSaleRequestDto;
@@ -11,6 +12,7 @@ import davidson.com.ecommerce.resources.sale_item.SaleItemRepository;
 import davidson.com.ecommerce.resources.sale_item.dto.request.UpdateSaleItemDto;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -62,6 +64,10 @@ public class SaleService {
 
     public List<Sale> findAll() {
         return saleRepository.findAll();
+    }
+
+    public List<Sale> findByDate(LocalDateTime date) {
+        return saleRepository.findBySoldAt(date);
     }
 
     @Transactional

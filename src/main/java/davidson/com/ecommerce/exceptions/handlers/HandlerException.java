@@ -1,9 +1,6 @@
 package davidson.com.ecommerce.exceptions.handlers;
 
-import davidson.com.ecommerce.exceptions.ContentConflictException;
-import davidson.com.ecommerce.exceptions.ForbiddenException;
-import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
-import davidson.com.ecommerce.exceptions.UnauthorizedException;
+import davidson.com.ecommerce.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.time.DateTimeException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -115,6 +113,39 @@ public class HandlerException {
         StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage("Email or password invalid.");
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(UnprocessableException.class)
+    public ResponseEntity<StandardException> handleException(UnprocessableException exception) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage(exception.getMessage());
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandardException> handleException(IllegalArgumentException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage(exception.getMessage());
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(DateTimeException.class)
+    public ResponseEntity<StandardException> handleException(DateTimeException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage("Invalid date format. Use yyyy-MM-dd");
 
         return ResponseEntity.status(status).body(error);
     }
