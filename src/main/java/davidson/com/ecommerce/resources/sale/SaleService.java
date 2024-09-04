@@ -66,8 +66,8 @@ public class SaleService {
         return saleRepository.findAll();
     }
 
-    public List<Sale> findByDate(LocalDateTime date) {
-        return saleRepository.findBySoldAt(date);
+    public List<Sale> findByDate(LocalDateTime start, LocalDateTime end) {
+        return saleRepository.findBySoldAtBetween(start, end);
     }
 
     @Transactional

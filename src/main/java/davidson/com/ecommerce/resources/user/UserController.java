@@ -8,6 +8,8 @@ import davidson.com.ecommerce.resources.user.dtos.response.SignupResponseDto;
 import davidson.com.ecommerce.security.TokenService;
 
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/signup")
+    @CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<SignupResponseDto> signup(@RequestBody @Valid SignupRequestDto dto) {
         User user = userService.signup(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -53,6 +56,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/signup/admin")
+    @CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<SignupResponseDto> signupAdmin(@RequestBody @Valid SignupRequestDto dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User admin = (User) authentication.getPrincipal();
@@ -72,6 +76,7 @@ public class UserController {
     }
 
     @GetMapping
+    @Cacheable("users")
     public ResponseEntity<List<EntityModel<SignupResponseDto>>> getAllUsers() {
         List<User> users = userService.getAll();
         if (users.isEmpty()) return ResponseEntity.ok(List.of());
@@ -81,5 +86,12 @@ public class UserController {
             return entityModel;
         }).toList();
         return ResponseEntity.ok(entityModels);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    @CacheEvict(value = "users", allEntries = true)
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

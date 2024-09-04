@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +35,12 @@ public class Sale implements Serializable {
 
     @OneToMany(mappedBy = "id.sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SaleItem> saleItems = new HashSet<>();
+
+    public BigDecimal getTotalValue() {
+        return saleItems.stream()
+                .map(SaleItem::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
     @Override
     public String toString() {

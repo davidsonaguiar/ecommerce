@@ -1,6 +1,7 @@
 package davidson.com.ecommerce.resources.user;
 
 import davidson.com.ecommerce.exceptions.ContentConflictException;
+import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
 import davidson.com.ecommerce.resources.user.dtos.request.SignupRequestDto;
 import davidson.com.ecommerce.resources.user.enums.Role;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,5 +50,10 @@ public class UserService implements UserDetailsService {
 
     public List<User> getAll() {
         return userRespository.findAll();
+    }
+
+    public void delete(Long id) {
+        if(!userRespository.existsById(id)) throw new ResourceNotFoundException("User not found");
+        userRespository.deleteById(id);
     }
 }

@@ -6,8 +6,10 @@ import davidson.com.ecommerce.resources.product.dto.request.UpdateProductRequest
 import davidson.com.ecommerce.resources.product.dto.response.GetProductResponseDto;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @CacheEvict(value = "products", allEntries = true)
     public ResponseEntity<Product> createProduct(@RequestBody @Valid CreateProductRequestDto dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User admin = (User) authentication.getPrincipal();
@@ -54,6 +57,7 @@ public class ProductController {
 
 
     @GetMapping
+    @Cacheable("products")
     public ResponseEntity<List<EntityModel<GetProductResponseDto>>> getAllProducts() {
         List<Product> products = productService.getAll();
         if (products.isEmpty()) return ResponseEntity.ok(List.of());
@@ -68,6 +72,7 @@ public class ProductController {
 
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "products", allEntries = true)
     public ResponseEntity<EntityModel<GetProductResponseDto>> updateProduct(@PathVariable Long id, @RequestBody @Valid UpdateProductRequestDto dto) {
         Product product = productService.update(id, dto);
         EntityModel<GetProductResponseDto> entityModel = EntityModel.of(GetProductResponseDto.fromEntity(product));
@@ -77,6 +82,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "products", allEntries = true)
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteById(id);
         return ResponseEntity.noContent().build();

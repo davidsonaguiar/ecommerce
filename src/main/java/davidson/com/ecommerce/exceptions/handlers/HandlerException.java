@@ -3,10 +3,13 @@ package davidson.com.ecommerce.exceptions.handlers;
 import davidson.com.ecommerce.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.DateTimeException;
@@ -145,7 +148,40 @@ public class HandlerException {
 
         StandardException error = new StandardException();
         error.setStatus(status.value());
-        error.setMessage("Invalid date format. Use yyyy-MM-dd");
+        error.setMessage("Invalid date format.");
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<StandardException> handleException(ExceptionHandlerExceptionResolver exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage("JSON format invalid.");
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<StandardException> handleException(IllegalStateException exception) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage("Internal server error.");
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(TransactionSystemException.class)
+    public ResponseEntity<StandardException> handleException(TransactionSystemException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage("Invalid data.");
 
         return ResponseEntity.status(status).body(error);
     }
