@@ -30,14 +30,14 @@ public class UserService implements UserDetailsService {
     }
 
     public User signup(SignupRequestDto dto) {
-        if(existsByEmail(dto.email())) throw new ContentConflictException("Email already exists");
+        if (existsByEmail(dto.email())) throw new ContentConflictException("Email already exists");
         String encodedPassword = new BCryptPasswordEncoder().encode(dto.password());
         User user = new User(dto.name(), dto.email(), encodedPassword, Role.CLIENT);
         return userRespository.save(user);
     }
 
     public User signupAdmin(SignupRequestDto dto, User admin) {
-        if(existsByEmail(dto.email())) throw new ContentConflictException("Email already exists");
+        if (existsByEmail(dto.email())) throw new ContentConflictException("Email already exists");
         String encodedPassword = new BCryptPasswordEncoder().encode(dto.password());
         User user = new User(dto.name(), dto.email(), encodedPassword, Role.ADMIN);
         user.setRegisteredBy(admin);
@@ -53,7 +53,14 @@ public class UserService implements UserDetailsService {
     }
 
     public void delete(Long id) {
-        if(!userRespository.existsById(id)) throw new ResourceNotFoundException("User not found");
+        if (!userRespository.existsById(id)) throw new ResourceNotFoundException("User not found");
         userRespository.deleteById(id);
+    }
+
+    public String updatePassword(String email, String newPassword) {
+        User user = (User) userRespository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+        userRespository.save(user);
+        return "Password updated successfully";
     }
 }

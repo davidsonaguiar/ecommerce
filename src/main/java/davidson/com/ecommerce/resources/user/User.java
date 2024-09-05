@@ -42,6 +42,7 @@ public class User implements Serializable, UserDetails {
     private String email;
 
     @NotNull(message = "Password is required")
+    @Size(min = 6, message = "Password must have at least 6 characters")
     @Column(nullable = false)
     private String password;
 
