@@ -1,5 +1,6 @@
 package davidson.com.ecommerce.resources.product;
 
+import davidson.com.ecommerce.exceptions.UnauthorizedException;
 import davidson.com.ecommerce.resources.category.Category;
 import davidson.com.ecommerce.resources.category.CategoryRepository;
 import davidson.com.ecommerce.exceptions.ContentConflictException;
@@ -9,11 +10,8 @@ import davidson.com.ecommerce.resources.product.dto.request.UpdateProductRequest
 import davidson.com.ecommerce.resources.user.User;
 import davidson.com.ecommerce.resources.user.UserRespository;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 
-import java.beans.PropertyDescriptor;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +54,7 @@ public class ProductService {
 
     public Product update(Long id, UpdateProductRequestDto dto) {
         Product productToUpdate = getdById(id);
-
+        if(!productToUpdate.getActive()) throw new ContentConflictException("Product is not active");
         Optional<Product> exists = productRepository.findByNameAndBrandAndModel(dto.name(), dto.brand(), dto.model());
         if(exists.isPresent() && exists.get().getId() != id) throw new ContentConflictException("Product already exists");
 
@@ -66,6 +64,7 @@ public class ProductService {
 
     public void deleteById(Long id) {
         Product product = getdById(id);
+        if(!product.getActive()) throw new ContentConflictException("Product is not active");
 
         if(product.getSaleItems().size() == 0) {
             productRepository.deleteById(id);

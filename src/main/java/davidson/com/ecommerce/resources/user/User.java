@@ -1,6 +1,7 @@
 package davidson.com.ecommerce.resources.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import davidson.com.ecommerce.resources.product.Product;
 import davidson.com.ecommerce.resources.user.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -50,15 +51,20 @@ public class User implements Serializable, UserDetails {
     @Column(nullable = false)
     private Integer role;
 
+    @NotNull(message = "Active is required")
+    @Column(nullable = false)
+    private boolean active;
+
     @ManyToOne
     @JoinColumn(name = "registered_by")
     private User registeredBy;
 
-    public User(String name, String email, String password, Role role) {
+    public User(String name, String email, String password, Role role, boolean active) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role.getValue();
+        this.active = true;
     }
 
     public Role getRole() {
@@ -67,6 +73,10 @@ public class User implements Serializable, UserDetails {
 
     public void setRole(Role role) {
         this.role = role.getValue();
+    }
+
+    public void deactivate() {
+        this.active = false;
     }
 
     @Override
@@ -81,6 +91,8 @@ public class User implements Serializable, UserDetails {
     public String getUsername() {
         return email;
     }
+
+
 
     @Override
     public String toString() {

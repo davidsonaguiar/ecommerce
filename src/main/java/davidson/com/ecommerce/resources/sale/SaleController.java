@@ -6,17 +6,11 @@ import davidson.com.ecommerce.resources.sale.dtos.request.CreateSaleRequestDto;
 import davidson.com.ecommerce.resources.sale.dtos.request.UpdateSaleRequestDto;
 import davidson.com.ecommerce.resources.sale.dtos.response.GetReportResponseDto;
 import davidson.com.ecommerce.resources.sale.dtos.response.GetSaleResponseDto;
-import davidson.com.ecommerce.resources.sale_item.SaleItem;
-import davidson.com.ecommerce.resources.sale_item.dto.request.UpdateSaleItemDto;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cglib.core.Local;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,9 +38,9 @@ public class SaleController {
     @CacheEvict(value = "sales", allEntries = true)
     public ResponseEntity<Sale> createSale(@RequestBody @Valid CreateSaleRequestDto dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User admin = (User) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
 
-        Sale sale = saleService.create(dto, admin);
+        Sale sale = saleService.create(dto, user);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

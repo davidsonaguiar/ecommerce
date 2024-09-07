@@ -2,6 +2,7 @@ package davidson.com.ecommerce.resources.user;
 
 import davidson.com.ecommerce.common.LinkBuilder;
 import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
+import davidson.com.ecommerce.exceptions.UnauthorizedException;
 import davidson.com.ecommerce.resources.user.dtos.request.ResetPasswordRequestDto;
 import davidson.com.ecommerce.resources.user.dtos.request.SigninRequestDto;
 import davidson.com.ecommerce.resources.user.dtos.request.SignupRequestDto;
@@ -52,7 +53,9 @@ public class UserController {
     public ResponseEntity<SigninResponseDto> signin(@RequestBody @Valid SigninRequestDto dto) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
         var authentication = authenticationManager.authenticate(usernamePassword);
-        String token = tokenService.generateToken((User) authentication.getPrincipal());
+        User user = (User) authentication.getPrincipal();
+        if(!user.isActive()) throw new UnauthorizedException("User is not active");
+        String token = tokenService.generateToken(user);
         return ResponseEntity.ok().body(new SigninResponseDto(token));
     }
 
@@ -81,8 +84,10 @@ public class UserController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequestDto dto) {
-        UserDetails user = userService.loadUserByUsername(dto.email());
-        String token = tokenService.generateToken((User) user);
+        UserDetails userDetails = userService.loadUserByUsername(dto.email());
+        User user = (User) userDetails;
+        if(!user.isActive()) throw new UnauthorizedException("User is not active");
+        String token = tokenService.generateToken(user);
         String url = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/users/reset-password")
@@ -127,7 +132,10 @@ public class UserController {
     @DeleteMapping(value = "/{id}")
     @CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.delete(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User admin = (User) authentication.getPrincipal();
+
+        userService.delete(id, admin);
         return ResponseEntity.noContent().build();
     }
 }
