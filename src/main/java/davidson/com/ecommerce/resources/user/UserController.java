@@ -81,7 +81,6 @@ public class UserController {
                 .body(SignupResponseDto.fromEntity(user));
     }
 
-
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequestDto dto) {
         UserDetails userDetails = userService.loadUserByUsername(dto.email());

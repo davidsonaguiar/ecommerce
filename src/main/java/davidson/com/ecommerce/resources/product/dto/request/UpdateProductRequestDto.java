@@ -12,7 +12,7 @@ public record UpdateProductRequestDto(
         @Size(min = 3, max = 100, message = "Brand must be between 3 and 100 characters")
         String brand,
 
-        @Size(min = 3, max = 100, message = "Model must be between 3 and 100 characters")
+        @Size(min = 1, max = 100, message = "Model must be between 3 and 100 characters")
         String model,
 
         @Min(value = 0, message = "Price must be greater than 0")

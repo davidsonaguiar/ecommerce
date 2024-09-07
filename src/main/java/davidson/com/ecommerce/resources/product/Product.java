@@ -42,7 +42,7 @@ public class Product extends RepresentationModel<Product> implements Serializabl
     private String brand;
 
     @NotBlank(message = "Model is required")
-    @Size(min = 3, max = 100, message = "Model must be between 3 and 100 characters")
+    @Size(min = 1, max = 100, message = "Model must be between 1 and 100 characters")
     @Column(nullable = false)
     private String model;
 
