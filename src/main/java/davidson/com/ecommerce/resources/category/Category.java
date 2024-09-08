@@ -39,6 +39,10 @@ public class Category implements Serializable {
     )
     private List<Product> products = new ArrayList<>();
 
+    public Category(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "Category: { " +

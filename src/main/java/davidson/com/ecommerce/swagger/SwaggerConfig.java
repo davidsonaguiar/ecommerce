@@ -1,4 +1,4 @@
-package davidson.com.ecommerce.api_doc;
+package davidson.com.ecommerce.swagger;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

@@ -40,6 +40,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users/reset-password/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/signup/admin").hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/categories/**").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
