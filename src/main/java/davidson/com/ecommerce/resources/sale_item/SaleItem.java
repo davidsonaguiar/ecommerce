@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Entity
 @Table(name = "sale_items")
-public class SaleItem implements Serializable {
+public class SaleItem extends RepresentationModel<SaleItem> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonIgnore

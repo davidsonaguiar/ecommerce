@@ -1,7 +1,5 @@
 package davidson.com.ecommerce.resources.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import davidson.com.ecommerce.resources.product.Product;
 import davidson.com.ecommerce.resources.user.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -11,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements Serializable, UserDetails {
+public class User extends RepresentationModel<User> implements Serializable, UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id

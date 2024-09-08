@@ -1,35 +1,38 @@
 package davidson.com.ecommerce.resources.sale.dtos.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import davidson.com.ecommerce.resources.product.dto.response.GetAllProductsResponseDto;
 import davidson.com.ecommerce.resources.sale.Sale;
 import davidson.com.ecommerce.resources.sale.SaleController;
-import davidson.com.ecommerce.resources.sale_item.dto.response.IncludeSaleItemResponseDto;
-import davidson.com.ecommerce.resources.user.dtos.response.IncludeUserResponseDto;
 import org.springframework.hateoas.Links;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-
-public record GetSaleResponseDto(
+public record GetAllSalesResponseDto(
         Long id,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss'Z'", timezone = "UTC")
         LocalDateTime soldAt,
-        IncludeUserResponseDto soldTo,
-        Set<IncludeSaleItemResponseDto> saleItems,
+        BigDecimal total,
+        Integer quantityItems,
         URI link
 ) {
-    public static GetSaleResponseDto fromEntity(Sale sale) {
-        return new GetSaleResponseDto(
+    public static GetAllSalesResponseDto fromEntity(Sale sale) {
+        return new GetAllSalesResponseDto(
                 sale.getId(),
                 sale.getSoldAt(),
-                IncludeUserResponseDto.fromEntity(sale.getSoldTo()),
-                IncludeSaleItemResponseDto.fromEntities(sale.getSaleItems()),
+                sale.getTotalValue(),
+                sale.getSaleItems().size(),
                 linkTo(methodOn(SaleController.class).getSale(sale.getId())).toUri()
         );
+    }
+
+    public static List<GetAllSalesResponseDto> fromEntities(List<Sale> sales) {
+        return sales.stream().map(GetAllSalesResponseDto::fromEntity).toList();
     }
 }

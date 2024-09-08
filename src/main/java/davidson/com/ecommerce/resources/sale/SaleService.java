@@ -1,8 +1,8 @@
 package davidson.com.ecommerce.resources.sale;
 
 import davidson.com.ecommerce.exceptions.ContentConflictException;
+import davidson.com.ecommerce.exceptions.ForbiddenException;
 import davidson.com.ecommerce.exceptions.ResourceNotFoundException;
-import davidson.com.ecommerce.exceptions.UnprocessableException;
 import davidson.com.ecommerce.resources.product.Product;
 import davidson.com.ecommerce.resources.product.ProductRepository;
 import davidson.com.ecommerce.resources.sale.dtos.request.CreateSaleRequestDto;
@@ -12,13 +12,10 @@ import davidson.com.ecommerce.resources.sale_item.SaleItemRepository;
 import davidson.com.ecommerce.resources.sale_item.dto.request.UpdateSaleItemDto;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class SaleService {
@@ -31,6 +28,7 @@ public class SaleService {
         this.productRepository = productRepository;
         this.saleItemRepository = saleItemRepository;
     }
+
 
     @Transactional
     public Sale create(CreateSaleRequestDto dto, User soldTo) {
@@ -58,21 +56,27 @@ public class SaleService {
         return saleSaved;
     }
 
+
     public Sale findById(Long id) {
         return saleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Sale not found"));
     }
+
 
     public List<Sale> findAll() {
         return saleRepository.findAll();
     }
 
+
     public List<Sale> findByDate(LocalDateTime start, LocalDateTime end) {
         return saleRepository.findBySoldAtBetween(start, end);
     }
 
+
     @Transactional
-    public Sale update(Long id, UpdateSaleRequestDto dto) {
+    public Sale update(Long id, UpdateSaleRequestDto dto, User user) {
         Sale sale = saleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Sale not found"));
+        if (!user.getRole().equals("ADMIN") && !sale.getSoldTo().getId().equals(user.getId()))
+            throw new ForbiddenException("You can't update this sale");
 
         sale.getSaleItems().forEach(item -> {
             if (dto.products().stream().noneMatch(productDto -> productDto.productId().equals(item.getProduct().getId()))) {
@@ -105,7 +109,8 @@ public class SaleService {
             if (sale.getSaleItems().stream().noneMatch(saleItem -> saleItem.getProduct().getId().equals(item.productId()))) {
                 Product product = productRepository.findById(item.productId()).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
                 if (!product.getActive()) throw new ContentConflictException("Product unavailable");
-                if (product.getQuantity() < item.quantity())throw new ContentConflictException("Product quantity is not enough");
+                if (product.getQuantity() < item.quantity())
+                    throw new ContentConflictException("Product quantity is not enough");
 
                 product.setQuantity(product.getQuantity() - item.quantity());
                 productRepository.save(product);
@@ -118,6 +123,7 @@ public class SaleService {
         sale.getSaleItems().removeIf(item -> item.getQuantity() == 0);
         return saleRepository.save(sale);
     }
+
 
     public void delete(Long id) {
         Sale sale = saleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Sale not found"));

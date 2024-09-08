@@ -185,4 +185,15 @@ public class HandlerException {
 
         return ResponseEntity.status(status).body(error);
     }
+
+    @ExceptionHandler(NoContentException.class)
+    public ResponseEntity<StandardException> handleException(NoContentException exception) {
+        HttpStatus status = HttpStatus.NO_CONTENT;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage(exception.getMessage());
+
+        return ResponseEntity.status(status).body(error);
+    }
 }

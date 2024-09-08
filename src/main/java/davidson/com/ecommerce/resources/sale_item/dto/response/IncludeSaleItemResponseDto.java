@@ -1,11 +1,15 @@
 package davidson.com.ecommerce.resources.sale_item.dto.response;
 
+import davidson.com.ecommerce.resources.product.ProductController;
 import davidson.com.ecommerce.resources.sale_item.SaleItem;
-import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public record IncludeSaleItemResponseDto(
         Long id,
@@ -13,7 +17,8 @@ public record IncludeSaleItemResponseDto(
         String brand,
         String model,
         BigDecimal price,
-        Integer quantity
+        Integer quantity,
+        URI link
 ) {
 
     public static IncludeSaleItemResponseDto fromEntity(SaleItem saleItem) {
@@ -24,7 +29,8 @@ public record IncludeSaleItemResponseDto(
                 saleItem.getProduct().getBrand(),
                 saleItem.getProduct().getModel(),
                 saleItem.getPrice(),
-                saleItem.getQuantity()
+                saleItem.getQuantity(),
+                linkTo(methodOn(ProductController.class).getProduct(saleItem.getProduct().getId())).toUri()
         );
     }
 

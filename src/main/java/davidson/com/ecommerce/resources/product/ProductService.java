@@ -1,6 +1,5 @@
 package davidson.com.ecommerce.resources.product;
 
-import davidson.com.ecommerce.exceptions.UnauthorizedException;
 import davidson.com.ecommerce.resources.category.Category;
 import davidson.com.ecommerce.resources.category.CategoryRepository;
 import davidson.com.ecommerce.exceptions.ContentConflictException;
@@ -34,7 +33,7 @@ public class ProductService {
         List<Category> categories = dto.categoriesIds()
                 .stream()
                 .map(categoryId -> categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + categoryId)))
+                        .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + categoryId)))
                 .toList();
 
         Product product = dto.toEntity();
@@ -54,9 +53,10 @@ public class ProductService {
 
     public Product update(Long id, UpdateProductRequestDto dto) {
         Product productToUpdate = getdById(id);
-        if(!productToUpdate.getActive()) throw new ContentConflictException("Product is not active");
+        if (!productToUpdate.getActive()) throw new ContentConflictException("Product is not active");
         Optional<Product> exists = productRepository.findByNameAndBrandAndModel(dto.name(), dto.brand(), dto.model());
-        if(exists.isPresent() && exists.get().getId() != id) throw new ContentConflictException("Product already exists");
+        if (exists.isPresent() && exists.get().getId() != id)
+            throw new ContentConflictException("Product already exists");
 
         BeanUtils.copyProperties(dto, productToUpdate, "id");
         return productRepository.save(productToUpdate);
@@ -64,9 +64,9 @@ public class ProductService {
 
     public void deleteById(Long id) {
         Product product = getdById(id);
-        if(!product.getActive()) throw new ContentConflictException("Product is not active");
+        if (!product.getActive()) throw new ContentConflictException("Product is not active");
 
-        if(product.getSaleItems().size() == 0) {
+        if (product.getSaleItems().size() == 0) {
             productRepository.deleteById(id);
             return;
         }

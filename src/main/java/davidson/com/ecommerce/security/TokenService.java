@@ -3,10 +3,8 @@ package davidson.com.ecommerce.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import davidson.com.ecommerce.exceptions.ForbiddenException;
 import davidson.com.ecommerce.exceptions.UnauthorizedException;
 import davidson.com.ecommerce.resources.user.User;
-import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

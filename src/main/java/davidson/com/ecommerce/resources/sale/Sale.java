@@ -1,12 +1,12 @@
 package davidson.com.ecommerce.resources.sale;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import davidson.com.ecommerce.resources.sale_item.SaleItem;
 import davidson.com.ecommerce.resources.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "sales")
-public class Sale implements Serializable {
+public class Sale extends RepresentationModel<Sale> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
