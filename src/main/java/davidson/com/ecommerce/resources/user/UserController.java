@@ -119,6 +119,17 @@ public class UserController {
     }
 
 
+    @PutMapping(value = "/{id}")
+    @CacheEvict(value = "users", allEntries = true)
+    public ResponseEntity<GetUserResponseDto> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserRequestDto dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+
+        User userUpdated = userService.update(id, dto, user);
+        return ResponseEntity.ok().body(GetUserResponseDto.fromEntity(userUpdated));
+    }
+
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<GetUserResponseDto> getUser(@PathVariable Long id) {
         User user = userService.getById(id);

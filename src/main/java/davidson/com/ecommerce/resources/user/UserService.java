@@ -3,6 +3,7 @@ package davidson.com.ecommerce.resources.user;
 import davidson.com.ecommerce.exceptions.*;
 import davidson.com.ecommerce.resources.user.dtos.request.SignupRequestDto;
 import davidson.com.ecommerce.resources.user.enums.Role;
+import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -79,5 +80,16 @@ public class UserService implements UserDetailsService {
         user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
         userRespository.save(user);
         return "Password updated successfully";
+    }
+
+    public User update(Long id, UpdateUserRequestDto dto, User user) throws ForbiddenException, ResourceNotFoundException {
+        User userToUpdate = getById(id);
+        if(!userToUpdate.isActive()) throw new ForbiddenException("User is not active");
+        if (!user.getRole().equals(Role.ADMIN) && !userToUpdate.getId().equals(user.getId()))
+            throw new ForbiddenException("You can't update this user");
+
+        userToUpdate.setName(dto.name());
+
+        return userRespository.save(userToUpdate);
     }
 }
