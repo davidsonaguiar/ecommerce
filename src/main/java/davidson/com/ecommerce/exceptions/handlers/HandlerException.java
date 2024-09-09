@@ -9,6 +9,8 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -154,14 +156,15 @@ public class HandlerException {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<StandardException> handleException(ExceptionHandlerExceptionResolver exception) {
+    @ResponseBody
+    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         StandardException error = new StandardException();
         error.setStatus(status.value());
-        error.setMessage("JSON format invalid.");
+        error.setMessage("JSON Invalid data.");
 
-        return ResponseEntity.status(status).body(error);
+        return ResponseEntity.status(status).body("Invalid data.");
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -193,6 +196,17 @@ public class HandlerException {
         StandardException error = new StandardException();
         error.setStatus(status.value());
         error.setMessage(exception.getMessage());
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<StandardException> handleException(MethodArgumentTypeMismatchException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandardException error = new StandardException();
+        error.setStatus(status.value());
+        error.setMessage("Invalid parameter type.");
 
         return ResponseEntity.status(status).body(error);
     }
