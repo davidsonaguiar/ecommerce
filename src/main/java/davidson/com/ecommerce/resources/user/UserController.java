@@ -5,6 +5,7 @@ import davidson.com.ecommerce.resources.user.dtos.request.ResetPasswordRequestDt
 import davidson.com.ecommerce.resources.user.dtos.request.SigninRequestDto;
 import davidson.com.ecommerce.resources.user.dtos.request.SignupRequestDto;
 import davidson.com.ecommerce.resources.user.dtos.request.UpdatePasswordRequestDto;
+import davidson.com.ecommerce.resources.user.dtos.response.GetAllUsersResponseDto;
 import davidson.com.ecommerce.resources.user.dtos.response.GetUserResponseDto;
 import davidson.com.ecommerce.resources.user.dtos.response.SigninResponseDto;
 import davidson.com.ecommerce.security.TokenService;
@@ -94,6 +95,7 @@ public class UserController {
         UserDetails userDetails = userService.loadUserByUsername(dto.email());
 
         User user = (User) userDetails;
+        System.out.println("Is Active ->" + user.isActive());
         if (!user.isActive()) throw new UnauthorizedException("User is not active");
 
         String token = tokenService.generateToken(user);
@@ -126,18 +128,16 @@ public class UserController {
 
     @GetMapping
     @Cacheable("users")
-    public ResponseEntity<List<GetUserResponseDto>> getAllUsers() {
+    public ResponseEntity<List<GetAllUsersResponseDto>> getAllUsers() {
         List<User> users = userService.getAll();
-        return ResponseEntity.ok(GetUserResponseDto.fromEntities(users));
+        return ResponseEntity.ok(GetAllUsersResponseDto.fromEntities(users));
     }
 
 
     @DeleteMapping(value = "/{id}")
     @CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User admin = (User) authentication.getPrincipal();
-        userService.delete(id, admin);
+        userService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

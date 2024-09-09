@@ -10,24 +10,20 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-public record GetUserResponseDto (
+public record GetAllUsersResponseDto (
         Long id,
         String name,
-        String email,
-        Role roles,
         URI link
 ){
-    public static GetUserResponseDto fromEntity(User user) {
-        return new GetUserResponseDto(
+    public static GetAllUsersResponseDto fromEntity(User user) {
+        return new GetAllUsersResponseDto(
                 user.getId(),
                 user.getName(),
-                user.getEmail(),
-                user.getRole(),
-                linkTo(methodOn(UserController.class).getAllUsers()).toUri()
+                linkTo(methodOn(UserController.class).getUser(user.getId())).toUri()
         );
     }
 
-    public static List<GetUserResponseDto> fromEntities(List<User> users) {
-        return users.stream().map(GetUserResponseDto::fromEntity).toList();
+    public static List<GetAllUsersResponseDto> fromEntities(List<User> users) {
+        return users.stream().map(GetAllUsersResponseDto::fromEntity).toList();
     }
 }

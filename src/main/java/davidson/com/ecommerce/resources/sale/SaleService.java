@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SaleService {
@@ -31,7 +32,7 @@ public class SaleService {
 
 
     @Transactional
-    public Sale create(CreateSaleRequestDto dto, User soldTo) {
+    public Sale create(CreateSaleRequestDto dto, User soldTo) throws ContentConflictException, ResourceNotFoundException {
         Sale sale = new Sale();
         sale.setSoldTo(soldTo);
         sale.setSoldAt(LocalDateTime.now());
@@ -41,8 +42,7 @@ public class SaleService {
             Long id = productDto.productId();
             Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
             if (!product.getActive()) throw new ContentConflictException("Product unavailable");
-            if (product.getQuantity() < productDto.quantity())
-                throw new ContentConflictException("Product quantity is not enough");
+            if (product.getQuantity() < productDto.quantity()) throw new ContentConflictException("Product quantity is not enough");
 
             product.setQuantity(product.getQuantity() - productDto.quantity());
             productRepository.save(product);
@@ -57,8 +57,10 @@ public class SaleService {
     }
 
 
-    public Sale findById(Long id) {
-        return saleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Sale not found"));
+    public Sale findById(Long id) throws ResourceNotFoundException {
+        Optional<Sale> sale = saleRepository.findById(id);
+        if (sale.isEmpty()) throw new ResourceNotFoundException("Sale not found");
+        return sale.get();
     }
 
 
@@ -73,7 +75,7 @@ public class SaleService {
 
 
     @Transactional
-    public Sale update(Long id, UpdateSaleRequestDto dto, User user) {
+    public Sale update(Long id, UpdateSaleRequestDto dto, User user) throws ResourceNotFoundException, ForbiddenException, ContentConflictException {
         Sale sale = saleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Sale not found"));
         if (!user.getRole().equals("ADMIN") && !sale.getSoldTo().getId().equals(user.getId()))
             throw new ForbiddenException("You can't update this sale");
@@ -125,7 +127,7 @@ public class SaleService {
     }
 
 
-    public void delete(Long id) {
+    public void delete(Long id) throws ResourceNotFoundException {
         Sale sale = saleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Sale not found"));
         saleRepository.delete(sale);
     }

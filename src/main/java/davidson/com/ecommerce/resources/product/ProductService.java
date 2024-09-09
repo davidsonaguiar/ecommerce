@@ -26,7 +26,7 @@ public class ProductService {
         this.userRespository = userRespository;
     }
 
-    public Product save(CreateProductRequestDto dto, User admin) {
+    public Product save(CreateProductRequestDto dto, User admin) throws ContentConflictException, ResourceNotFoundException {
         Optional<Product> exists = productRepository.findByNameAndBrandAndModel(dto.name(), dto.brand(), dto.model());
         if (exists.isPresent()) throw new ContentConflictException("Product already exists");
 
@@ -42,7 +42,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Product getdById(Long id) {
+    public Product getdById(Long id) throws ResourceNotFoundException {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + id));
     }
@@ -51,7 +51,7 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product update(Long id, UpdateProductRequestDto dto) {
+    public Product update(Long id, UpdateProductRequestDto dto) throws ContentConflictException, ResourceNotFoundException {
         Product productToUpdate = getdById(id);
         if (!productToUpdate.getActive()) throw new ContentConflictException("Product is not active");
         Optional<Product> exists = productRepository.findByNameAndBrandAndModel(dto.name(), dto.brand(), dto.model());
@@ -62,7 +62,7 @@ public class ProductService {
         return productRepository.save(productToUpdate);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id) throws ResourceNotFoundException, ContentConflictException {
         Product product = getdById(id);
         if (!product.getActive()) throw new ContentConflictException("Product is not active");
 
