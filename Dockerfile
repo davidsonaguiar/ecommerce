@@ -1,5 +1,5 @@
 # Multi-stage build para otimizar o tamanho da imagem final
-FROM maven:3.9.4-openjdk-17-slim AS build
+FROM maven:3.9.4-eclipse-temurin-17-alpine AS build
 
 # Definir diretório de trabalho
 WORKDIR /app
@@ -12,9 +12,13 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Estágio final - runtime
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-alpine
 
 # Instalar curl para health checks (opcional)
+RUN apk add --no-cache curl
+
+# Criar usuário não-root para segurança
+RUN addgroup -g 1001 -S spring && adduser -u 1001 -S spring -G springhecks (opcional)
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Criar usuário não-root para segurança
