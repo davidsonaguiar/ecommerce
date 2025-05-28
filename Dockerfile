@@ -18,11 +18,7 @@ FROM eclipse-temurin:17-jre-alpine
 RUN apk add --no-cache curl
 
 # Criar usuário não-root para segurança
-RUN addgroup -g 1001 -S spring && adduser -u 1001 -S spring -G springhecks (opcional)
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
-# Criar usuário não-root para segurança
-RUN groupadd -r spring && useradd -r -g spring spring
+RUN addgroup spring && adduser -D -G spring spring
 
 # Definir diretório de trabalho
 WORKDIR /app
