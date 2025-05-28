@@ -1,5 +1,5 @@
 # Multi-stage build para otimizar o tamanho da imagem final
-FROM maven:3.9.4-eclipse-temurin-17-alpine AS build
+FROM maven:3.9.4-eclipse-temurin-22-alpine AS build
 
 # Definir diretório de trabalho
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Estágio final - runtime
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:22-jre-alpine
 
 # Instalar curl para health checks (opcional)
 RUN apk add --no-cache curl
